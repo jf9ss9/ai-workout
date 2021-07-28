@@ -1,16 +1,25 @@
 import cv2
 import mediapipe as mp
 import posemodule.pose as pose
-from .constants import POSE_CONNECTIONS
 from typing import Tuple
+from .constants import POSE_CONNECTIONS
 
 
 class FrameProcessor:
+
     def __init__(self, width, height):
         self._width = width
         self._height = height
 
     def draw_landmarks(self, frame, pose_landmarks, cv2_mode=True, ignored_landmarks=None) -> None:
+        """
+        Method used for drawing the pose on a frame.
+
+        :param frame: The frame/ image to draw on
+        :param pose_landmarks: Pose landmarks from the processed frame
+        :param cv2_mode: By default True. If False, MediaPipe's own drawing module is used
+        :param ignored_landmarks: Landmarks to be ignored when drawing the points
+        """
         if ignored_landmarks is None:
             ignored_landmarks = []
         if not cv2_mode:
@@ -20,6 +29,13 @@ class FrameProcessor:
             self.__draw_landmarks_cv2(frame, landmarks_dict, POSE_CONNECTIONS)
 
     def __draw_landmarks_cv2(self, frame, landmarks, pose_connections) -> None:
+        """
+        Private method for self.draw_landmark's cv2 mode.
+
+        :param frame: The frame/ image to draw on
+        :param landmarks: Dictionary containing the landmarks and their indexes
+        :param pose_connections: The graph representing the connections
+        """
         for connection in pose_connections:
             lmpoint_1, lmpoint_2 = connection[0].value, connection[1].value
             if (lmpoint_1 in landmarks) and (lmpoint_2 in landmarks):
@@ -34,6 +50,14 @@ class FrameProcessor:
             cv2.circle(frame, (x_scaled, y_scaled), 5, (0, 0, 255), cv2.FILLED)
 
     def draw_angle(self, frame, pose_landmarks, points_index: Tuple[int, int, int], emphasize_points: bool = True):
+        """
+        Method used for drawing the angle and to highlight the 3 points.
+
+        :param frame: The frame/ image to draw on
+        :param pose_landmarks: Pose landmarks from the processed frame
+        :param points_index: The landmark points to get the angle from. See MediaPipe docu.
+        :param emphasize_points: By default True. If False, the processed points are not highlighted
+        """
         # If pose_landmarks is not a dictionary returned by PoseDetector.get_landmarks_dict, then convert it
         if type(pose_landmarks) is not dict:
             pose_landmarks = pose.PoseDetector.get_landmarks_dict(pose_landmarks)
