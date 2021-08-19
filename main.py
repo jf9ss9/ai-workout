@@ -6,7 +6,7 @@ from posemodule.frame import FrameProcessor
 
 def main():
     pTime = 0
-    cap = cv2.VideoCapture("fiftypullups.mp4")
+    cap = cv2.VideoCapture("videos/fiftypullups.mp4")
     pose_detector = PoseDetector(model_complexity=1)
     frame_width, frame_height = cap.read()[1].shape[1], cap.read()[1].shape[0]
     frame_processor = FrameProcessor(frame_width, frame_height)
