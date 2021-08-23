@@ -3,13 +3,15 @@ import mediapipe as mp
 import posemodule.pose as pose
 from typing import Tuple
 from .constants import POSE_CONNECTIONS
+from .pose import PoseDetector
 
 
 class FrameProcessor:
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, pose_detector: PoseDetector):
         self._width = width
         self._height = height
+        self._pose_detector = pose_detector
 
     def draw_landmarks(self, frame, pose_landmarks, cv2_mode=True, ignored_landmarks=None) -> None:
         """
@@ -72,3 +74,16 @@ class FrameProcessor:
                 for point in points:
                     cv2.circle(frame, point, 10, (255, 0, 0), 2)
             cv2.putText(frame, str(int(angle)), points[1], cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 3)
+
+    def process(self, frame) -> None:
+        """
+        "ETL" type of method used to process a frame (extract, transform, load). \n
+        The landmarks are extracted from the frame, then FrameProcessor's draw_landmark is called
+        followed by the draw_angle method.
+
+        :param frame: The frame/ image to process/ draw/ transform
+        """
+
+        landmarks = self._pose_detector.find_pose(frame)
+        self.draw_landmarks(frame, landmarks, ignored_landmarks=set(range(33)) - {12, 14, 16, 11, 13, 15})
+        self.draw_angle(frame, landmarks, points_index=(12, 14, 16))
