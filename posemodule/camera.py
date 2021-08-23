@@ -23,7 +23,8 @@ class CameraFeed:
         :return: current frame.
         """
         ret, frame = self._capture.read()
-        cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        if frame is not None:
+            cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         return frame
 
     def destroy(self):

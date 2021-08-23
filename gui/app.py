@@ -27,8 +27,11 @@ class AIWorkoutApp(MDApp):
 
     def load_frame(self, *args):
         img_rgb = self._camera_feed.get_frame()
-        self._frame_processor.process(img_rgb)
-        buffer = cv2.flip(img_rgb, 0).tobytes()
-        texture = Texture.create(size=(img_rgb.shape[1], img_rgb.shape[0]), colorfmt="bgr")
-        texture.blit_buffer(buffer, colorfmt="bgr", bufferfmt="ubyte")
-        self._image.texture = texture
+        if img_rgb is None:
+            self.stop()
+        else:
+            self._frame_processor.process(img_rgb)
+            buffer = cv2.flip(img_rgb, 0).tobytes()
+            texture = Texture.create(size=(img_rgb.shape[1], img_rgb.shape[0]), colorfmt="bgr")
+            texture.blit_buffer(buffer, colorfmt="bgr", bufferfmt="ubyte")
+            self._image.texture = texture
