@@ -5,16 +5,17 @@ from kivy.uix.image import Image
 from kivy.clock import Clock
 from kivy.graphics.texture import Texture
 from posemodule.camera import CameraFeed
+from posemodule.frame import FrameProcessor
 
 
 class AIWorkoutApp(MDApp):
-    def __init__(self, frame_processor, camera_feed: CameraFeed):
+    def __init__(self, frame_processor: FrameProcessor, camera_feed: CameraFeed):
         super().__init__()
         self._image = None
         self._camera_feed = camera_feed
         self._frame_processor = frame_processor
 
-    def on_stop(self):
+    def on_stop(self) -> None:
         self._camera_feed.destroy()
 
     def build(self):
@@ -25,7 +26,7 @@ class AIWorkoutApp(MDApp):
 
         return layout
 
-    def load_frame(self, *args):
+    def load_frame(self, *args) -> None:
         img_rgb = self._camera_feed.get_frame()
         if img_rgb is None:
             self.stop()

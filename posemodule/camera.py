@@ -27,9 +27,9 @@ class CameraFeed:
             cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         return frame
 
-    def destroy(self):
+    def destroy(self) -> None:
         """
-        Destructor type of method. Makes sure everything is closed/ released properly.
+        Destructor type method. Makes sure everything is closed/ released properly.
         """
         self._capture.release()
         cv2.destroyAllWindows()

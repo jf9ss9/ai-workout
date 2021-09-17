@@ -85,5 +85,5 @@ class FrameProcessor:
         """
 
         landmarks = self._pose_detector.find_pose(frame)
-        self.draw_landmarks(frame, landmarks, ignored_landmarks=set(range(33)) - {12, 14, 16, 11, 13, 15})
+        self.draw_landmarks(frame, landmarks)
         self.draw_angle(frame, landmarks, points_index=(12, 14, 16))
