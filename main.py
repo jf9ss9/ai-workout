@@ -5,8 +5,8 @@ from gui.app import AIWorkoutApp
 
 
 def main():
-    camera_feed = CameraFeed(0)
-    pose_detector = PoseDetector()
+    camera_feed = CameraFeed("videos/videoplayback.mp4")
+    pose_detector = PoseDetector(model_complexity=1)
     resolution = camera_feed.get_resolution()
     frame_processor = FrameProcessor(resolution[0], resolution[1], pose_detector)
     app = AIWorkoutApp(frame_processor, camera_feed)
