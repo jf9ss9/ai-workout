@@ -38,7 +38,7 @@ class AIWorkoutApp(MDApp):
         self._image.anim_delay = 0.08
         self._image.anim_loop = 1
         self._image.remove_from_cache()
-        Clock.schedule_once(self._schedule_video, timeout=0)
+        Clock.schedule_once(self._schedule_video, timeout=6)
 
     def _schedule_video(self, *args) -> None:
         """

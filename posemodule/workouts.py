@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from .pose import PoseDetector
 from enum import Enum
-
+from log.logconfig import *
 
 class States(Enum):
     UP = 1
@@ -69,7 +69,8 @@ class BicepCurls(Workout):
             angle_14_12_24 = PoseDetector.get_angle(points)
 
             if angle_14_12_24 < (360-25):
-                print("Failure: Hold your arms closer to your body.")
+                logger.info("Failure: Hold your arms closer to your body.")
+                print("Failure")
                 self._failure_alerted = True
 
 
