@@ -41,7 +41,7 @@ class PoseDetector:
                 if index not in ignored_landmarks}
 
     @staticmethod
-    def get_angle(points: Tuple[Tuple[float, float], Tuple[float, float], Tuple[float, float]]) -> float:
+    def get_angle(points: Tuple[Tuple[int, int], Tuple[int, int], Tuple[int, int]]) -> float:
         """
         Static method for extracting the angle between 3 points
 

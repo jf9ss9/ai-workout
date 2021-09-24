@@ -4,14 +4,16 @@ import posemodule.pose as pose
 from typing import Tuple
 from .constants import POSE_CONNECTIONS
 from .pose import PoseDetector
+from .workouts import BicepCurls
 
 
 class FrameProcessor:
 
-    def __init__(self, width, height, pose_detector: PoseDetector):
-        self._width = width
-        self._height = height
+    def __init__(self, resolution: Tuple[int, int], pose_detector: PoseDetector, workout: BicepCurls):
+        self._width = resolution[0]
+        self._height = resolution[1]
         self._pose_detector = pose_detector
+        self._workout = workout
 
     def draw_landmarks(self, frame, pose_landmarks, cv2_mode=True, ignored_landmarks=None) -> None:
         """
@@ -75,6 +77,9 @@ class FrameProcessor:
                     cv2.circle(frame, point, 10, (255, 0, 0), 2)
             cv2.putText(frame, str(int(angle)), points[1], cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 3)
 
+    def draw_repetitions(self, frame):
+        cv2.putText(frame, str(self._workout.get_repetitions()), (400, 200), cv2.FONT_HERSHEY_PLAIN, 8, (0, 0, 255), 8)
+
     def process(self, frame) -> None:
         """
         "ETL" type of method used to process a frame (extract, transform, load). \n
@@ -85,5 +90,8 @@ class FrameProcessor:
         """
 
         landmarks = self._pose_detector.find_pose(frame)
-        self.draw_landmarks(frame, landmarks)
+        self.draw_landmarks(frame, landmarks, ignored_landmarks=(range(11)))
         self.draw_angle(frame, landmarks, points_index=(12, 14, 16))
+        self._workout.start_workout(landmarks)
+        self.draw_repetitions(frame)
+
