@@ -7,6 +7,7 @@ from kivy.clock import Clock
 from kivy.graphics.texture import Texture
 from posemodule.camera import CameraFeed
 from posemodule.frame import FrameProcessor
+from log.logconfig import logger
 
 
 class AIWorkoutApp(MDApp):
@@ -15,9 +16,11 @@ class AIWorkoutApp(MDApp):
         self._image = Image()
         self._camera_feed = camera_feed
         self._frame_processor = frame_processor
+        logger.info("Application started successfully")
 
     def on_stop(self) -> None:
         self._camera_feed.destroy()
+        logger.info("Application stopped normally")
 
     def build(self):
         box_layout = MDBoxLayout(orientation="vertical")
@@ -25,6 +28,7 @@ class AIWorkoutApp(MDApp):
         start_btn = MDRaisedButton(text="START", pos_hint={"center_x": .5, "center_y": .5})
         start_btn.bind(on_press=self.start_animation)
         box_layout.add_widget(start_btn)
+        logger.info("Application built")
 
         return box_layout
 
@@ -38,7 +42,8 @@ class AIWorkoutApp(MDApp):
         self._image.anim_delay = 0.08
         self._image.anim_loop = 1
         self._image.remove_from_cache()
-        Clock.schedule_once(self._schedule_video, timeout=6)
+        logger.info("Workout animation started")
+        Clock.schedule_once(self._schedule_video, timeout=0)
 
     def _schedule_video(self, *args) -> None:
         """
@@ -47,6 +52,7 @@ class AIWorkoutApp(MDApp):
         :param args: catch stuff
         """
         Clock.schedule_interval(self._load_frame, 1.0 / 60.0)
+        logger.info(f"Frames scheduled for the video at every {1.0 / 60.0:.4f} seconds")
 
     def _load_frame(self, *args) -> None:
         """

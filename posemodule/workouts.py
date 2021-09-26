@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from .pose import PoseDetector
 from enum import Enum
-from log.logconfig import *
+from log.logconfig import logger
 
 class States(Enum):
     UP = 1
@@ -62,7 +62,7 @@ class BicepCurls(Workout):
 
     def failure_check(self, pose_landmarks):
         if not self._failure_alerted:
-            if all(idx in pose_landmarks.keys() for idx in self.relevant_points):
+            if all(idx in pose_landmarks.keys() for idx in (14, 12, 24)):
                 points = tuple((int(pose_landmarks[idx].x * self.resolution[0]),
                                 int(pose_landmarks[idx].y * self.resolution[1])) for idx in (14, 12, 24))
 
@@ -70,7 +70,7 @@ class BicepCurls(Workout):
 
             if angle_14_12_24 < (360-25):
                 logger.info("Failure: Hold your arms closer to your body.")
-                print("Failure")
+                print("Failure: Hold your arms closer to your body.")
                 self._failure_alerted = True
 
 

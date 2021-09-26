@@ -3,11 +3,9 @@ from posemodule.frame import FrameProcessor
 from posemodule.camera import CameraFeed
 from posemodule.workouts import BicepCurls
 from gui.app import AIWorkoutApp
-import logging
 
 
 def main():
-    logging.basicConfig(filename="ai_workout.log", format="%(ascitime)s:%(levelname)s:%(message)s")
     camera_feed = CameraFeed("videos/Untitled.mp4")
     pose_detector = PoseDetector(model_complexity=1)
     workout_type = BicepCurls(10, camera_feed.get_resolution())
