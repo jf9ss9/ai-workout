@@ -5,13 +5,14 @@ from typing import Tuple
 from .constants import POSE_CONNECTIONS
 from .pose import PoseDetector
 from .workouts import BicepCurls
+from .camera import Resolution
 
 
 class FrameProcessor:
 
-    def __init__(self, resolution: Tuple[int, int], pose_detector: PoseDetector, workout: BicepCurls):
-        self._width = resolution[0]
-        self._height = resolution[1]
+    def __init__(self, resolution: Resolution, pose_detector: PoseDetector, workout: BicepCurls):
+        self._width = resolution.width
+        self._height = resolution.height
         self._pose_detector = pose_detector
         self._workout = workout
 
@@ -94,4 +95,5 @@ class FrameProcessor:
         self.draw_angle(frame, landmarks, points_index=(12, 14, 16))
         self._workout.start_workout(landmarks)
         self.draw_repetitions(frame)
+
 

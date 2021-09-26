@@ -2,6 +2,7 @@ import cv2
 import math
 import mediapipe as mp
 from typing import Tuple, List, Optional
+from .camera import Resolution
 
 
 class PoseDetector:
@@ -52,3 +53,10 @@ class PoseDetector:
         ang = math.degrees(math.atan2(c[1] - b[1], c[0] - b[0]) - math.atan2(a[1] - b[1], a[0] - b[0]))
 
         return ang + 360 if ang < 0 else ang
+
+    @staticmethod
+    def convert_points_index_to_screen_coordinates(resolution: Resolution, pose_landmarks, points_index):
+        points = tuple((int(pose_landmarks[idx].x * resolution.width),
+                        int(pose_landmarks[idx].y * resolution.height)) for idx in points_index)
+
+        return points

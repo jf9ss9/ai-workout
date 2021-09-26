@@ -1,4 +1,7 @@
 import cv2
+from collections import namedtuple
+
+Resolution = namedtuple("Resolution", "width height")
 
 
 class CameraFeed:
@@ -14,7 +17,7 @@ class CameraFeed:
         :return: a tuple containing the width and the height in this order.
         """
 
-        return self.frame_width, self.frame_height
+        return Resolution(self.frame_width, self.frame_height)
 
     def get_frame(self):
         """

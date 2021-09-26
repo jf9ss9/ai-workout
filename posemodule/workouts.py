@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from .pose import PoseDetector
 from enum import Enum
+from .pose import PoseDetector
+from .camera import Resolution
 from log.logconfig import logger
 
 class States(Enum):
@@ -10,7 +11,7 @@ class States(Enum):
 
 class Workout(ABC):
 
-    def __init__(self, repetition_goals: int, resolution):
+    def __init__(self, repetition_goals: int, resolution: Resolution):
         self._repetitions = 0
         self.repetition_goals = repetition_goals
         self.resolution = resolution
@@ -34,8 +35,8 @@ class BicepCurls(Workout):
         pose_landmarks = PoseDetector.get_landmarks_dict(pose_landmarks)
         self.failure_check(pose_landmarks)
         if all(idx in pose_landmarks.keys() for idx in self.relevant_points):
-            points = tuple((int(pose_landmarks[idx].x * self.resolution[0]),
-                            int(pose_landmarks[idx].y * self.resolution[1])) for idx in self.relevant_points)
+            points = tuple((int(pose_landmarks[idx].x * self.resolution.width),
+                            int(pose_landmarks[idx].y * self.resolution.height)) for idx in self.relevant_points)
 
             angle = PoseDetector.get_angle(points)
             self.determine_state(angle)
@@ -63,8 +64,8 @@ class BicepCurls(Workout):
     def failure_check(self, pose_landmarks):
         if not self._failure_alerted:
             if all(idx in pose_landmarks.keys() for idx in (14, 12, 24)):
-                points = tuple((int(pose_landmarks[idx].x * self.resolution[0]),
-                                int(pose_landmarks[idx].y * self.resolution[1])) for idx in (14, 12, 24))
+                points = tuple((int(pose_landmarks[idx].x * self.resolution.width),
+                                int(pose_landmarks[idx].y * self.resolution.height)) for idx in (14, 12, 24))
 
             angle_14_12_24 = PoseDetector.get_angle(points)
 
