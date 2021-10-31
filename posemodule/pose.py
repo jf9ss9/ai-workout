@@ -56,7 +56,11 @@ class PoseDetector:
 
     @staticmethod
     def convert_points_index_to_screen_coordinates(resolution: Resolution, pose_landmarks, points_index):
-        points = tuple((int(pose_landmarks[idx].x * resolution.width),
-                        int(pose_landmarks[idx].y * resolution.height)) for idx in points_index)
+        if all(idx in pose_landmarks.keys() for idx in (14, 12, 24)):
+            points = tuple((int(pose_landmarks[idx].x * resolution.width),
+                            int(pose_landmarks[idx].y * resolution.height)) for idx in points_index)
 
-        return points
+            return points
+        else:
+            raise Exception("Could not detect the relevant points.")
+

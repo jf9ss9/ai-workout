@@ -1,0 +1,83 @@
+WindowManager:
+    MainWindow:
+    ExercisesWindow:
+    FaultsWindow:
+    WorkoutWindow:
+
+<MainWindow>:
+    name: "main"
+
+    BoxLayout:
+        orientation: 'vertical'
+        MDToolbar:
+            title: 'Exercises'
+
+        MDRaisedButton:
+            text: "Exercise"
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            on_release: app.root.current = "exercises"
+
+        MDRaisedButton:
+            text: "Faults"
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            on_release:
+                app.root.current = "faults"
+                screen = app.root.get_screen("faults")
+                screen.display_faults(screen.fetch_faults_from_db())
+
+<ExercisesWindow>:
+    name: "exercises"
+
+    BoxLayout:
+        orientation: 'vertical'
+        MDToolbar:
+            title: 'Exercises'
+
+        ScrollView:
+            do_scroll_x: False
+            BoxLayout:
+                id: exercise_list
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+        GridLayout:
+            cols: 2
+            MDRaisedButton:
+                text: "Bicep Curls"
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                on_release: app.root.current = "workout"
+
+            MDRaisedButton:
+                text: "Back to homepage"
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                on_release: app.root.current = "main"
+
+<FaultsWindow>:
+    name: "faults"
+
+    BoxLayout:
+        orientation: 'vertical'
+        MDToolbar:
+            title: 'Faults'
+
+        ScrollView:
+            do_scroll_x: False
+            BoxLayout:
+                id: faults_list
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+
+
+<WorkoutWindow>
+    name: "workout"
+
+    BoxLayout:
+        orientation: "vertical"
+        Image:
+            id: workout_image
+            source: ''
+        MDRaisedButton:
+            text: "START"
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            on_press: app.start_animation()

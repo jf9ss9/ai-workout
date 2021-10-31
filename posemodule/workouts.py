@@ -1,8 +1,10 @@
+import datetime
 from abc import ABC, abstractmethod
 from enum import Enum
 from .pose import PoseDetector
 from .camera import Resolution
 from log.logconfig import logger
+
 
 class States(Enum):
     UP = 1
@@ -16,6 +18,7 @@ class Workout(ABC):
         self.repetition_goals = repetition_goals
         self.resolution = resolution
         self._failure_alerted = False
+        self.observer = None
 
     def get_repetitions(self):
         return self._repetitions
@@ -23,6 +26,9 @@ class Workout(ABC):
     @abstractmethod
     def start_workout(self):
         pass
+
+    def subscribe_observer(self, observer):
+        self.observer = observer
 
 
 class BicepCurls(Workout):
@@ -63,16 +69,19 @@ class BicepCurls(Workout):
 
     def failure_check(self, pose_landmarks):
         if not self._failure_alerted:
-            if all(idx in pose_landmarks.keys() for idx in (14, 12, 24)):
-                points = tuple((int(pose_landmarks[idx].x * self.resolution.width),
-                                int(pose_landmarks[idx].y * self.resolution.height)) for idx in (14, 12, 24))
+            try:
+                points = PoseDetector.convert_points_index_to_screen_coordinates(self.resolution,
+                                                                                 pose_landmarks,
+                                                                                 (14, 12, 24))
+            except Exception as ex:
+                logger.warning(str(ex))
+            else:
+                angle_14_12_24 = PoseDetector.get_angle(points)
 
-            angle_14_12_24 = PoseDetector.get_angle(points)
-
-            if angle_14_12_24 < (360-25):
-                logger.info("Failure: Hold your arms closer to your body.")
-                print("Failure: Hold your arms closer to your body.")
-                self._failure_alerted = True
+                if angle_14_12_24 < (360-25):
+                    print("Failure: Hold your arms closer to your body.")
+                    self.observer.notify("Failure: Hold your arms closer to your body.", 1, datetime.datetime.now())
+                    self._failure_alerted = True
 
 
 

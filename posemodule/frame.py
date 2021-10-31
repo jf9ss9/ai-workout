@@ -1,3 +1,5 @@
+import datetime
+
 import cv2
 import mediapipe as mp
 import posemodule.pose as pose
@@ -14,7 +16,7 @@ class FrameProcessor:
         self._width = resolution.width
         self._height = resolution.height
         self._pose_detector = pose_detector
-        self._workout = workout
+        self.workout = workout
 
     def draw_landmarks(self, frame, pose_landmarks, cv2_mode=True, ignored_landmarks=None) -> None:
         """
@@ -79,7 +81,7 @@ class FrameProcessor:
             cv2.putText(frame, str(int(angle)), points[1], cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 3)
 
     def draw_repetitions(self, frame):
-        cv2.putText(frame, str(self._workout.get_repetitions()), (400, 200), cv2.FONT_HERSHEY_PLAIN, 8, (0, 0, 255), 8)
+        cv2.putText(frame, str(self.workout.get_repetitions()), (400, 200), cv2.FONT_HERSHEY_PLAIN, 8, (0, 0, 255), 8)
 
     def process(self, frame) -> None:
         """
@@ -93,7 +95,8 @@ class FrameProcessor:
         landmarks = self._pose_detector.find_pose(frame)
         self.draw_landmarks(frame, landmarks, ignored_landmarks=(range(11)))
         self.draw_angle(frame, landmarks, points_index=(12, 14, 16))
-        self._workout.start_workout(landmarks)
+        self.workout.start_workout(landmarks)
         self.draw_repetitions(frame)
+
 
 
