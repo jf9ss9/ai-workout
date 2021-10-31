@@ -2,6 +2,7 @@ import cv2
 import math
 import mediapipe as mp
 from typing import Tuple, List, Optional
+from .camera import Resolution
 
 
 class PoseDetector:
@@ -41,7 +42,7 @@ class PoseDetector:
                 if index not in ignored_landmarks}
 
     @staticmethod
-    def get_angle(points: Tuple[Tuple[float, float], Tuple[float, float], Tuple[float, float]]) -> float:
+    def get_angle(points: Tuple[Tuple[int, int], Tuple[int, int], Tuple[int, int]]) -> float:
         """
         Static method for extracting the angle between 3 points
 
@@ -52,3 +53,14 @@ class PoseDetector:
         ang = math.degrees(math.atan2(c[1] - b[1], c[0] - b[0]) - math.atan2(a[1] - b[1], a[0] - b[0]))
 
         return ang + 360 if ang < 0 else ang
+
+    @staticmethod
+    def convert_points_index_to_screen_coordinates(resolution: Resolution, pose_landmarks, points_index):
+        if all(idx in pose_landmarks.keys() for idx in (14, 12, 24)):
+            points = tuple((int(pose_landmarks[idx].x * resolution.width),
+                            int(pose_landmarks[idx].y * resolution.height)) for idx in points_index)
+
+            return points
+        else:
+            raise Exception("Could not detect the relevant points.")
+
