@@ -1,22 +1,67 @@
 WindowManager:
-    MainWindow:
+    LoginWindow:
+    HomePageWindow:
     RegisterWindow:
     ExercisesWindow:
     FaultsWindow:
     WorkoutWindow:
 
-<MainWindow>:
-    name: "main"
+
+<LoginWindow>
+    name: "login"
+
+    MDCard:
+        size_hint: None, None
+        size: 300, 400
+        pos_hint: {"center_x": .5, "center_y:": .5}
+        padding: 20
+        spacing: 30
+        orientation: "vertical"
+
+        MDLabel:
+            text: "Login"
+            font_size: 45
+            font_style: "Button"
+            size_hint_y: None
+            halign: "center"
+            height: self.texture_size[1]
+
+        MDTextFieldRound:
+            id: username
+            hint_text: "username"
+            icon_right: "account"
+            size_hint_x: None
+            width: 200
+            pos_hint: {"center_x": .5}
+
+        MDTextFieldRound:
+            id: password
+            hint_text: "password"
+            icon_right: "eye-off"
+            size_hint_x: None
+            width: 200
+            pos_hint: {"center_x": .5}
+            password: True
+
+        MDRoundFlatButton:
+            text: "Login"
+            pos_hint: {"center_x": .5, "center_y": .5}
+            on_release:
+                form_field = root.ids
+                root.login(form_field.username.text, form_field.password.text)
+
+        MDRoundFlatButton:
+            text: "Register"
+            pos_hint: {"center_x": .5, "center_y": .5}
+            on_release: app.root.current = "register"
+
+<HomePageWindow>:
+    name: "homepage"
 
     BoxLayout:
         orientation: 'vertical'
         MDToolbar:
-            title: 'Exercises'
-
-        MDRaisedButton:
-            text: "Register"
-            pos_hint: {"center_x": 0.5, "center_y": 0.5}
-            on_release: app.root.current = "register"
+            title: 'Homepage'
 
         MDRaisedButton:
             text: "Exercise"
@@ -56,7 +101,7 @@ WindowManager:
             MDRaisedButton:
                 text: "Back to homepage"
                 pos_hint: {"center_x": 0.5, "center_y": 0.5}
-                on_release: app.root.current = "main"
+                on_release: app.root.current = "homepage"
 
 <FaultsWindow>:
     name: "faults"
@@ -116,6 +161,14 @@ WindowManager:
             pos_hint: {"center_x": .5}
 
         MDTextFieldRound:
+            id: age
+            hint_text: "age"
+            icon_right: "account"
+            size_hint_x: None
+            width: 200
+            pos_hint: {"center_x": .5}
+
+        MDTextFieldRound:
             id: username
             hint_text: "username"
             icon_right: "account"
@@ -135,6 +188,10 @@ WindowManager:
         MDRoundFlatButton:
             text: "REGISTER"
             pos_hint: {"center_x": .5, "center_y": .5}
+            on_release:
+                form_field = root.ids
+                root.register(form_field.username.text, form_field.name.text,
+                form_field.age.text, form_field.password.text)
 
         MDRoundFlatButton:
             text: "CLEAR"

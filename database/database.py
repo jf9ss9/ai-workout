@@ -1,5 +1,5 @@
-from credentials import *
 #from log.logconfig import logger
+from database.credentials import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker, relationship, Session
@@ -58,7 +58,7 @@ def connect_to_db():
     Base.metadata.create_all(engine)
 
 
-def register_user(username: str, name: str, age: int, password: str) -> None:
+def register_user(username: str, name: str, age: int, password: str) -> bool:
     with Session(engine) as session:
         try:
             session.add(User(username=username, name=name, age=age, password=create_bcrypt_hash(password)))
@@ -66,6 +66,9 @@ def register_user(username: str, name: str, age: int, password: str) -> None:
         except IntegrityError:
             print("Username already taken.")
             #logger.warning("Username already taken")
+            return False
+        else:
+            return True
 
 
 def verify_user(username: str, password: str) -> bool:
@@ -90,6 +93,7 @@ def retrieve_from_db(instance: Base):
         return session.query(instance).all()
 
 
-connect_to_db()
-register_user("szeddy", "Edy", 22, "xdlolkekasd")
+if __name__ == "__main__":
+    connect_to_db()
+
 

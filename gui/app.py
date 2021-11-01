@@ -14,15 +14,24 @@ from kivy.graphics.texture import Texture
 from posemodule.camera import CameraFeed
 from posemodule.frame import FrameProcessor
 from log.logconfig import logger
-from database.database import *
+from database import *
 
 
-class MainWindow(Screen):
+class HomePageWindow(Screen):
     pass
+
+
+class LoginWindow(Screen):
+    def login(self, username, password):
+        if verify_user(username, password) is True:
+            self.manager.current = "homepage"
 
 
 class RegisterWindow(Screen):
-    pass
+
+    def register(self, username, name, age, password):
+        if register_user(username, name, age, password) is True:
+            self.manager.current = "homepage"
 
 
 class ExercisesWindow(Screen):
@@ -79,6 +88,7 @@ class AIWorkoutApp(MDApp):
         self._fault_observer = FaultObserver()
         self._frame_processor.workout.subscribe_observer(self._fault_observer)
         self.root = None
+        self.logged_in = False
         logger.info("Application started successfully")
 
     def on_stop(self) -> None:
