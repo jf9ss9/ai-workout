@@ -21,6 +21,10 @@ class MainWindow(Screen):
     pass
 
 
+class RegisterWindow(Screen):
+    pass
+
+
 class ExercisesWindow(Screen):
     pass
 
