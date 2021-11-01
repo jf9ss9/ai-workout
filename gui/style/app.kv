@@ -55,6 +55,11 @@ WindowManager:
             pos_hint: {"center_x": .5, "center_y": .5}
             on_release: app.root.current = "register"
 
+        MDRoundFlatButton:
+            text: "Clear"
+            pos_hint: {"center_x": .5, "center_y": .5}
+            on_release: root.clear()
+
 <HomePageWindow>:
     name: "homepage"
 
@@ -196,3 +201,4 @@ WindowManager:
         MDRoundFlatButton:
             text: "CLEAR"
             pos_hint: {"center_x": .5, "center_y": .5}
+            on_release: root.clear()

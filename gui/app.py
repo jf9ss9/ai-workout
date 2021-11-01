@@ -23,15 +23,28 @@ class HomePageWindow(Screen):
 
 class LoginWindow(Screen):
     def login(self, username, password):
-        if verify_user(username, password) is True:
+        if username == "" or password == "":
+            return
+        elif verify_user(username, password) is True:
             self.manager.current = "homepage"
+
+    def clear(self):
+        for field in (self.ids.username, self.ids.password):
+            field.text = ""
 
 
 class RegisterWindow(Screen):
 
     def register(self, username, name, age, password):
-        if register_user(username, name, age, password) is True:
+        if any(elem == "" for elem in [username, name, age, password]):
+            return
+        elif register_user(username, name, age, password) is True:
             self.manager.current = "homepage"
+
+    def clear(self):
+        form_fields = (self.ids.name, self.ids.age, self.ids.username, self.ids.password)
+        for field in form_fields:
+            field.text = ""
 
 
 class ExercisesWindow(Screen):
