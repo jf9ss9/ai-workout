@@ -56,7 +56,10 @@ WindowManager:
         MDRoundFlatButton:
             text: "Register"
             pos_hint: {"center_x": .5, "center_y": .5}
-            on_release: app.root.current = "register"
+            on_release:
+                app.root.current = "register"
+                root.ids.username.focus = False
+                root.manager.get_screen("register").ids.name.focus = True
 
         MDRoundFlatButton:
             text: "Clear"
@@ -196,6 +199,10 @@ WindowManager:
             pos_hint: {"center_x": .5}
             password: True
             write_tab: False
+            on_text_validate:
+                form_field = root.ids
+                root.register(form_field.username.text, form_field.name.text,
+                form_field.age.text, form_field.password.text)
 
         MDRoundFlatButton:
             text: "REGISTER"
