@@ -4,6 +4,7 @@ from enum import Enum
 from .pose import PoseDetector
 from .camera import Resolution
 from log.logconfig import logger
+from database import *
 
 
 class States(Enum):
@@ -19,9 +20,17 @@ class Workout(ABC):
         self.resolution = resolution
         self._failure_alerted = False
         self.observer = None
+        self.workout_id = self._generate_id()
+
+    @staticmethod
+    def _generate_id():
+        return get_max_workout_id() + 1
 
     def get_repetitions(self):
         return self._repetitions
+
+    def get_current_workout(self):
+        return self.__class__.__name__
 
     @abstractmethod
     def start_workout(self):
@@ -79,8 +88,8 @@ class BicepCurls(Workout):
                 angle_14_12_24 = PoseDetector.get_angle(points)
 
                 if angle_14_12_24 < (360-25):
-                    print("Failure: Hold your arms closer to your body.")
-                    self.observer.notify("Failure: Hold your arms closer to your body.", 1, datetime.datetime.now())
+                    self.observer.notify("Failure: Hold your arms closer to your body.", self.workout_id,
+                                         datetime.datetime.now())
                     self._failure_alerted = True
 
 

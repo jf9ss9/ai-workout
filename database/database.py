@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker, relationship, Session
 from sqlalchemy import Table, Column, Integer, String, LargeBinary, DateTime, MetaData, ForeignKey, create_engine
+from sqlalchemy import func
 
 Base = declarative_base()
 
@@ -82,6 +83,17 @@ def verify_user(username: str, password: str) -> bool:
     return verify_password(password, hashed_password)
 
 
+def create_workout(user_id: int, workout_type: str, repetitions: int, duration):
+    with Session(engine) as session:
+        session.add(Workout(user_id=user_id, workout_type=workout_type, repetitions=repetitions, duration=duration))
+        session.commit()
+
+
+def get_user(username: str):
+    with Session(engine) as session:
+        return session.query(User).filter(User.username == username).first()
+
+
 def send_in_db(instance: Base):
     with Session(engine) as session:
         session.add(instance)
@@ -91,6 +103,12 @@ def send_in_db(instance: Base):
 def retrieve_from_db(instance: Base):
     with Session(engine) as session:
         return session.query(instance).all()
+
+
+def get_max_workout_id():
+    with Session(engine) as session:
+        row = session.query(func.max(Workout.id)).first()
+        return row[0] if row is not None else 0
 
 
 if __name__ == "__main__":

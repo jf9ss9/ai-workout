@@ -1,4 +1,4 @@
-import random
+import time
 import io
 import cv2
 
@@ -10,15 +10,26 @@ from kivy.uix.screenmanager import Screen, ScreenManager
 from kivy.uix.image import Image, CoreImage
 from kivy.clock import Clock
 from kivy.lang import Builder
+from kivy.app import App
+from kivy.properties import StringProperty
 from kivy.graphics.texture import Texture
 from posemodule.camera import CameraFeed
 from posemodule.frame import FrameProcessor
 from log.logconfig import logger
 from database import *
+from dataclasses import dataclass
+
+
+@dataclass
+class AppUser:
+    id: int
+    username: str
+    name: str
+    age: str
 
 
 class HomePageWindow(Screen):
-    pass
+    user_name = StringProperty()
 
 
 class LoginWindow(Screen):
@@ -27,6 +38,10 @@ class LoginWindow(Screen):
             return
         elif verify_user(username, password) is True:
             self.manager.current = "homepage"
+            app = App.get_running_app()
+            db_user = get_user(username)
+            self.manager.get_screen("homepage").user_name = db_user.name
+            app.set_user(AppUser(db_user.id, db_user.username, db_user.name, db_user.age))
 
     def clear(self):
         for field in (self.ids.username, self.ids.password):
@@ -101,11 +116,19 @@ class AIWorkoutApp(MDApp):
         self._fault_observer = FaultObserver()
         self._frame_processor.workout.subscribe_observer(self._fault_observer)
         self.root = None
-        self.logged_in = False
+        self.user = None
+        self.start_time = None
         logger.info("Application started successfully")
+
+    def set_user(self, user: int):
+        self.user = user
 
     def on_stop(self) -> None:
         self._camera_feed.destroy()
+        workout_object = self._frame_processor.workout
+        create_workout(self.user.id, workout_object.get_current_workout(),
+                       workout_object.get_repetitions(), int(time.time() - self.start_time))
+        self._fault_observer.workout_done()
         logger.info("Application stopped normally")
 
     def build(self):
@@ -130,6 +153,10 @@ class AIWorkoutApp(MDApp):
 
         :param args: catch stuff
         """
+        if self.user is None:
+            logger.critical("User not logged in. Houston, we got hacked.")
+            self.stop()
+            return
         workout_screen_image = self.root.get_screen('workout').ids.workout_image
 
         workout_screen_image.source = "videos/pushup.gif"
@@ -146,6 +173,7 @@ class AIWorkoutApp(MDApp):
         :param args: catch stuff
         """
         Clock.schedule_interval(self._load_frame, 1.0 / 60.0)
+        self.start_time = time.time()
         logger.info(f"Frames scheduled for the video at every {1.0 / 60.0:.4f} seconds")
 
     def _load_frame(self, *args) -> None:
@@ -156,6 +184,10 @@ class AIWorkoutApp(MDApp):
         """
         img_rgb = self._camera_feed.get_frame()
         if img_rgb is None:
+            workout_object = self._frame_processor.workout
+            create_workout(self.user.id, workout_object.get_current_workout(),
+                           workout_object.get_repetitions(), int(time.time() - self.start_time))
+            self._fault_observer.workout_done()
             self.stop()
         else:
             self._fault_observer.frame = img_rgb
@@ -171,9 +203,13 @@ class FaultObserver:
 
     def __init__(self):
         self.frame = None
+        self.fault_list = []
 
-    def notify(self, description: str, workout_id: int, date):
+    def notify(self, description: str, workout_id: int, date) -> None:
         print(description, workout_id, date)
-        send_in_db(Faults(id=random.randint(11, 100), description=description, date=date,
-                          screenshot=cv2.imencode(".png", self.frame)[1].tostring(), workout_id=workout_id))
+        self.fault_list.append(Faults(description=description, date=date,
+                                      screenshot=cv2.imencode(".png", self.frame)[1].tostring(), workout_id=workout_id))
 
+    def workout_done(self) -> None:
+        for fault in self.fault_list:
+            send_in_db(fault)
