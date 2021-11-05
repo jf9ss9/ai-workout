@@ -164,7 +164,7 @@ class AIWorkoutApp(MDApp):
         workout_screen_image.anim_loop = 1
         workout_screen_image.remove_from_cache()
         logger.info("Workout animation started")
-        Clock.schedule_once(self._schedule_video, timeout=0)
+        Clock.schedule_once(self._schedule_video, timeout=1)
 
     def _schedule_video(self, *args) -> None:
         """

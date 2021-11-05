@@ -5,6 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker, relationship, Session
 from sqlalchemy import Table, Column, Integer, String, LargeBinary, DateTime, MetaData, ForeignKey, create_engine
 from sqlalchemy import func
+import pyodbc
 
 Base = declarative_base()
 

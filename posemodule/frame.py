@@ -94,7 +94,7 @@ class FrameProcessor:
 
         landmarks = self._pose_detector.find_pose(frame)
         self.draw_landmarks(frame, landmarks, ignored_landmarks=(range(11)))
-        self.draw_angle(frame, landmarks, points_index=(12, 14, 16))
+        self.draw_angle(frame, landmarks, points_index=(23, 25, 27))
         self.workout.start_workout(landmarks)
         self.draw_repetitions(frame)
 
