@@ -24,3 +24,5 @@ automatically and saved mainly as a (screenshot, description) pair in an MSSQL d
 Faults can be checked after the workout as a screenshot of the exact frame when the fault was made and the fault description.
 I used SqlAlchemy's ORM for the connection with the database, and I have a custom logger so debugging is a lot easier.
 Check out the source code to see my coding/ designing skills and have a deeper sight of the application.
+
+Tech stack I used so far: Python, MSSQL, SqlAlchemy, Mediapipe, OpenCV, Kivy, logging and more..
