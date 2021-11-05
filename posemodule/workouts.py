@@ -4,6 +4,7 @@ from enum import Enum
 from .pose import PoseDetector
 from .camera import Resolution
 from log.logconfig import logger
+from database import *
 
 
 class States(Enum):
@@ -19,9 +20,17 @@ class Workout(ABC):
         self.resolution = resolution
         self._failure_alerted = False
         self.observer = None
+        self.workout_id = self._generate_id()
+
+    @staticmethod
+    def _generate_id():
+        return get_max_workout_id() + 1
 
     def get_repetitions(self):
         return self._repetitions
+
+    def get_current_workout(self):
+        return self.__class__.__name__
 
     @abstractmethod
     def start_workout(self):
@@ -70,18 +79,38 @@ class BicepCurls(Workout):
     def failure_check(self, pose_landmarks):
         if not self._failure_alerted:
             try:
-                points = PoseDetector.convert_points_index_to_screen_coordinates(self.resolution,
-                                                                                 pose_landmarks,
-                                                                                 (14, 12, 24))
+                points_14_12_24 = PoseDetector.convert_points_index_to_screen_coordinates(self.resolution,
+                                                                                          pose_landmarks, (14, 12, 24))
+                points_23_25_27 = PoseDetector.convert_points_index_to_screen_coordinates(self.resolution,
+                                                                                          pose_landmarks, (23, 25, 27))
+                points_11_13_15 = PoseDetector.convert_points_index_to_screen_coordinates(self.resolution,
+                                                                                          pose_landmarks, (11, 13, 15))
+                points_12_14_16 = PoseDetector.convert_points_index_to_screen_coordinates(self.resolution,
+                                                                                          pose_landmarks, (12, 14, 16))
             except Exception as ex:
                 logger.warning(str(ex))
             else:
-                angle_14_12_24 = PoseDetector.get_angle(points)
+                angle_14_12_24 = PoseDetector.get_angle(points_14_12_24)
+                angle_23_25_27 = PoseDetector.get_angle(points_23_25_27)
+                angle_11_13_15 = PoseDetector.get_angle(points_11_13_15)
+                angle_12_14_16 = PoseDetector.get_angle(points_12_14_16)
 
                 if angle_14_12_24 < (360-25):
-                    print("Failure: Hold your arms closer to your body.")
-                    self.observer.notify("Failure: Hold your arms closer to your body.", 1, datetime.datetime.now())
+                    self.observer.notify("Failure: Hold your arms closer to your body.", self.workout_id,
+                                         datetime.datetime.now())
                     self._failure_alerted = True
+
+                if angle_23_25_27 > 300:
+                    self.observer.notify("Failure: Don't sit you lazy bastard.", self.workout_id,
+                                         datetime.datetime.now())
+                    self._failure_alerted = True
+
+                if not ((angle_11_13_15 + 15) <= angle_12_14_16 <= (angle_11_13_15 - 15)):
+                    self.observer.notify("Failure: Move your both hands at the same pace.", self.workout_id,
+                                         datetime.datetime.now())
+                    self._failure_alerted = True
+
+
 
 
 
