@@ -26,3 +26,5 @@ I used SqlAlchemy's ORM for the connection with the database, and I have a custo
 Check out the source code to see my coding/ designing skills and have a deeper sight of the application.
 
 Tech stack I used so far: Python, MSSQL, SqlAlchemy, Mediapipe, OpenCV, Kivy, logging and more..
+
+![Alt Text](https://media.giphy.com/media/0BRjOjpHePzTBwHv39/source.mp4)

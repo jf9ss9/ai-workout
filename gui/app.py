@@ -159,12 +159,12 @@ class AIWorkoutApp(MDApp):
             return
         workout_screen_image = self.root.get_screen('workout').ids.workout_image
 
-        workout_screen_image.source = "videos/pushup.gif"
+        workout_screen_image.source = "videos/bicep_curls.gif"
         workout_screen_image.anim_delay = 0.08
         workout_screen_image.anim_loop = 1
         workout_screen_image.remove_from_cache()
         logger.info("Workout animation started")
-        Clock.schedule_once(self._schedule_video, timeout=1)
+        Clock.schedule_once(self._schedule_video, timeout=5)
 
     def _schedule_video(self, *args) -> None:
         """
